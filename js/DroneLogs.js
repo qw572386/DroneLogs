@@ -30,6 +30,8 @@ $(document).on("pagecreate", "#editLog", function() {
     reloadPage(prevDay);
   });
   $("#saveLogger").on("tap", function() {
+    var canSave = true;
+    
     return false;
   });
 });
