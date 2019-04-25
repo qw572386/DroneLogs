@@ -12,3 +12,21 @@
     flex-wrap: wrap;
     margin-bottom: 1.1em;
 }
+.popup-overlay{
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .75);
+}
+.popup-content{
+    margin: 50% 10%;
+}
+.popup-footer{
+    text-align: right;
+}
+.popup-footer button{
+    border: none;
+    color: aqua;
+}

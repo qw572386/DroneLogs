@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes" /> 
-    <link
-      rel="stylesheet"
-      href="./plugin/jquery.mobile/jquery.mobile-1.4.5.min.css"
-    />
+    <link rel="stylesheet" href="./plugin/jquery.mobile/jquery.mobile-1.4.5.min.css" />
     <link rel="stylesheet" href="./css/drone.css" />
     <title>DroneLogs</title>
   </head>
@@ -60,7 +57,7 @@
             placeholder="numeric"
           />
           <label for="category">Category #:</label>
-          <select name="category" id="category" data-native-menu="false">
+          <select name="category" id="category">
             <option value=""></option>
             <option value="Civil">Civil</option>
             <option value="Government">Government</option>
@@ -78,9 +75,9 @@
     </div>
     <div data-role="page" id="logger">
       <div data-role="header">
-        <a href="#" class="ui-btn ui-icon-plus ui-btn-icon-left">Clear</a>
+        <button id="clearLogs" class="ui-btn ui-icon-plus ui-btn-icon-left">Clear</button>
         <h1>Day <span id="loggerDayNumber"></span></h1>
-        <a href="#" class="ui-btn ui-icon-home ui-btn-icon-left">Send</a>
+        <a href="#sendConfirm" data-ref="dialog" id="sendLogs" class="ui-btn ui-icon-home ui-btn-icon-left">Send</a>
       </div>
 
       <div data-role="content">
@@ -94,9 +91,8 @@
             <span>key,</span>
             <span>contract#,</span>
             <span>category</span>
-            <!-- latitude,logitude,serial#,pilot,key,contract#,category -->
         </div>
-        <ul data-role="listview">
+        <ul data-role="listview" id="logListView">
         </ul>
       </div>
 
@@ -104,7 +100,17 @@
         <a href="#" data-rel="back" class="ui-btn ui-icon-delete ui-btn-icon-left">Back</a>
       </div>
     </div>
-
+    <div data-role="page" id="sendConfirm">
+      <div data-role="header">
+        <h1>Send logs?</h1>
+      </div>
+    
+      <div data-role="content">
+        <p>Do you want to send all logs, this has the effect of deleting all logs?</p>
+        <a href="#editLog" data-role="button" data-inline="true">Cancel</a>
+        <a href="#editLog" data-role="button" data-inline="true">Yes</a>
+      </div>
+    </div> 
     <script src="./plugin/jquery/jquery.min.js"></script>
     <script src="./plugin/jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
     <script src="./js/DroneLogs.js"></script>
