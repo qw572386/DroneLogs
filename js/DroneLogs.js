@@ -3,10 +3,30 @@ $(document).on("pagecreate", "#app", function() {
     window.localStorage.setItem("day", $(this).index() + 1);
   });
 });
-$(document).on("pagebeforeshow", "#editLog", function() {
+$(document).on("pageshow", "#editLog", function() {
   $("#dayNumber").html(window.localStorage.getItem("day"));
 });
 $(document).on("pagecreate", "#editLog", function() {
+  var dateFormat = function (fmt,date) { 
+    var o = {   
+      "M+" : date.getMonth()+1,
+      "d+" : date.getDate(),
+      "h+" : date.getHours(),
+      "m+" : date.getMinutes(),
+      "s+" : date.getSeconds(),
+      "q+" : Math.floor((date.getMonth()+3)/3),
+      "S"  : date.getMilliseconds() 
+    };   
+    if(/(y+)/.test(fmt)) 
+      fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
+    for(var k in o)   
+      if(new RegExp("("+ k +")").test(fmt))   
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+    return fmt;   
+  }
+  var random = function random(lower, upper) {
+    return Math.floor(Math.random() * (upper - lower)) + lower;
+  }
   $("#reset").on("tap", function() {
     $("#logForm")[0].reset();
   });
@@ -29,39 +49,37 @@ $(document).on("pagecreate", "#editLog", function() {
     }
     reloadPage(prevDay);
   });
-  function selfPopupShow(id, tips){
-    var popupWrp = $("#"+id+"Popup");
-    if(popupWrp.length < 1){
-      var popupWrp = $('<div id="'+id+'Popup" data-role="popup" data-theme="b" data-overlay-theme="b" data-dismissible="false" class="ui-popup-container ui-popup-active ui-popup ui-corner-all popup-overlay"></div>');
-      // popupWrp.append('<a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" onclick="selfPopupClose(\''+id+'\')" href="#">Close</a>');
-      // popupWrp.append('<div id="'+id+'" class="ui-content" data-role="main" style="height:400px; overflow:auto"></div>');
-     var shtml = '<div data-role="popup" id="'+ id +'" class="ui-content ui-popup ui-body-b ui-overlay-shadow ui-corner-all popup-content" data-theme="b">'+
-     '<h3>Alert</h3>'+
-     '<p>'+ (tips||'')+'</p>'+
-     '<p class="popup-footer"><a href:javascript;>OK</a></p>'+
-     '</div>';
-      popupWrp.append(shtml);
-      popupWrp.appendTo($.mobile.pageContainer);
-    }
-  }
   $("#saveLogger").on("tap", function() {
     var canSave = true;
-    var serial = $('#serial').val();
-    if (serial.length !== 4) {
+    if ($('#serial').val().length !== 4) {
+      alert('Drone id code must be 4 numbers');
       canSave = false;
-      selfPopupShow('schemePage');
     }
-    if (!$('#serial').val()) {
+    if (!$('#pilot').val()) {
+      alert('Drone pilot must be a non empty name string');
       canSave = false;
-      selfPopupShow('schemePage');
     }
-    selfPopupShow('schemePage');
+    if (canSave) {
+      var currentDay = window.localStorage.getItem('day');
+      var logData = window.localStorage.getItem('day' + currentDay) || '';
+      var newLog = dateFormat('M/d/yyyy hh:mm:ss', new Date()) + ',' + random(-180, 180) + ',' + random(-180, 180) + ',' + $('#serial').val() + ',' + $('#pilot').val() + ',' + $('#key').val() + ',' + $('#contract').val() + ',' + $('#category').val();
+      if (logData) {
+        window.localStorage.setItem('day'+currentDay, logData + ';' + newLog);
+      } else {
+        window.localStorage.setItem('day'+currentDay, newLog);
+      }
+      $("#logForm")[0].reset();
+      alert('Log saved');
+    } else {
+      alert('Log not saved. Please fix problems and try again.');
+    }
     return false;
   });
 });
-$(document).on("pagebeforecreate", "#logger", function() {
-  // $("#loggerDayNumber").html(window.localStorage.getItem("day"));
-  var loggers = window.localStorage.getItem('day' + window.localStorage.getItem('day'));
+$(document).on("pageshow", "#logger", function() {
+  var currentDay = window.localStorage.getItem('day');
+  $("#loggerDayNumber").html(currentDay);
+  var loggers = window.localStorage.getItem('day' + currentDay);
   if (loggers) {
     loggers.split(';').forEach(function(item) {
       $('#logListView').append('<li>' + item + '</li>');
@@ -70,15 +88,9 @@ $(document).on("pagebeforecreate", "#logger", function() {
     $('#logListView').html('');
   }
 });
-$(document).on("pageshow", "#logger", function() {
-  
-});
-$(document).on("pagecreate", "#logger", function() {
-  $("#loggerDayNumber").html(window.localStorage.getItem("day"));
-  $("#clearLogs").on("tap", function() {
-    window.localStorage.setItem('day' + window.localStorage.getItem('day'), '');
-  });
-  $("#sendLogs").on("tap", function() {
-    window.localStorage.setItem('day' + window.localStorage.getItem('day'), '');
+$(document).on("pagecreate", "#sendConfirm", function() {
+  $("#ensureSend").on("tap", function() {
+    alert('Logs send');
+    window.location.href="#editLog";
   });
 });
